@@ -1,6 +1,6 @@
 # Scanning the Sensor
 
-A scanning platform that measures the homogeneity of the sensor surface and determines the optimal wavelength — the one corresponding to the most sensitive slope in the reflectivity spectrum.
+A scanning platform that measures the homogeneity of the sensor surface and determines the optimal wavelength, the one corresponding to the most sensitive slope in the reflectivity spectrum.
 
 ## Overview
 
