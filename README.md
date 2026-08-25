@@ -19,3 +19,8 @@ The system integrates two Thorlabs piezoelectric motors with an optical spectrum
   <img src="Image_1.png" width="60%" /><br>
   <em>Figure 1 — Scan results.</em>
 </p>
+
+
+<p align="center">
+  <img src="amimation_1.gif" width="45%" />
+</p>
