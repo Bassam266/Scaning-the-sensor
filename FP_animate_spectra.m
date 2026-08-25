@@ -1,10 +1,13 @@
 %% FP_animate_spectra.m
 % Animate the reflectivity spectrum at every measurement point of a saved
-% FP calibration scan, and save the animation as a GIF.
+% FP calibration scan alongside the dip-wavelength map, and save the
+% animation as a GIF.
 %
 %   1. Load the saved scan file
-%   2. Loop over each measurement point (kx, ky) and plot its spectrum
-%   3. Save each plotted frame into a GIF
+%   2. Compute the dip (minimum) wavelength map, same as FP_calib_analyze.m
+%   3. Loop over each measurement point (kx, ky): show the map with the
+%      current point marked, next to that point's spectrum
+%   4. Save each plotted frame into a GIF
 %
 % Requires on path: none beyond base MATLAB.
 
@@ -29,7 +32,24 @@ fprintf('Loaded: %s\n', FILE_TO_ANALYZE);
 fprintf('spectra size: %s, lambda size: %s\n', ...
     mat2str(size(spectra)), mat2str(size(lambda)));
 
-%% ============================== 2. SETTINGS ==============================
+%% ============================== 2. DIP MAP ==============================
+
+dipVal_map = nan(scan.ny, scan.nx);
+dipWl_map  = nan(scan.ny, scan.nx);
+dipIdx_map = nan(scan.ny, scan.nx);
+
+for ky = 1:scan.ny
+    for kx = 1:scan.nx
+        pixSpec = squeeze(spectra(kx, ky, :));
+        [dp, dpIdx] = min(pixSpec);
+
+        dipVal_map(ky, kx)  = dp;
+        dipWl_map(ky, kx)   = lambda_nm(dpIdx);
+        dipIdx_map(ky, kx)  = dpIdx;
+    end
+end
+
+%% ============================== 3. SETTINGS ==============================
 
 GIF_FILE   = fullfile(fpath, 'spectra_animation.gif');
 FRAME_TIME = 0.1;   % seconds per frame
@@ -37,9 +57,9 @@ FRAME_TIME = 0.1;   % seconds per frame
 yMin = min(spectra(:), [], 'omitnan');
 yMax = max(spectra(:), [], 'omitnan');
 
-%% ============================== 3. PLOT EACH MEASUREMENT POINT & BUILD GIF ==============================
+%% ============================== 4. PLOT MAP + SPECTRUM & BUILD GIF ==============================
 
-fig = figure('Name', 'Spectra animation', 'Position', [100 100 700 450]);
+fig = figure('Name', 'Spectra animation', 'Position', [100 100 1000 450]);
 
 isFirstFrame = true;
 pt = 0;
@@ -49,13 +69,30 @@ for ky = 1:scan.ny
         pt = pt + 1;
 
         pixSpec = squeeze(spectra(kx, ky, :));
+        dpIdx = dipIdx_map(ky, kx);
 
-        plot(lambda_nm, pixSpec, 'LineWidth', 1.5);
+        % --- left panel: dip-wavelength map with current point marked ---
+        subplot(1, 2, 1);
+        imagesc(scan.x_um, scan.y_um, dipWl_map);
+        set(gca, 'YDir', 'normal'); axis image; colormap(gca, 'turbo'); colorbar;
+        xlabel('x [um]'); ylabel('y [um]'); title('Dip wavelength map [nm]');
+        hold on;
+        plot(scan.x_um(kx), scan.y_um(ky), 'wo', 'MarkerSize', 10, 'LineWidth', 2);
+        hold off;
+
+        % --- right panel: spectrum at current point, with dip marked ---
+        subplot(1, 2, 2);
+        plot(lambda_nm, pixSpec, 'LineWidth', 1.5); hold on;
+        plot(lambda_nm(dpIdx), dipVal_map(ky, kx), 'bv', 'MarkerFaceColor', 'b');
+        hold off;
         xlabel('Wavelength [nm]');
         ylabel('Reflectivity');
         ylim([yMin, yMax]);
         grid on;
+        legend('Spectrum', 'Dip', 'Location', 'best');
         title(sprintf('Point %d/%d  (kx=%d, ky=%d)', pt, scan.Npts, kx, ky));
+
+        sgtitle(sprintf('%s', FILE_TO_ANALYZE), 'Interpreter', 'none');
 
         drawnow;
 
