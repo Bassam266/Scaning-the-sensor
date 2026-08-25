@@ -182,3 +182,47 @@ catch
 end
 
 fprintf('\nAnalysis complete.\n');
+
+%%
+%%
+fpi = FPISpectraAnalysis('lambda',lambda,'spectra',spectra,'lambdadim',5);
+
+fpi.Normalize('spectra');
+fpi.Smooth(20,'spectra');
+fpi.ComputeDerivative();
+fpi.Smooth(20,'derivative');
+
+fpi.GetPeaks();
+fpi.ComputeContrast();
+stats = fpi.GetFPICharacteristics();
+
+fpi.ComputeOptimalWavelengthFromPeaks('minderivative');
+
+%%
+hf_spec = fpi.ShowSpectra(1,'type','imagesc','showPeaks',true);
+hf_spec.CurrentAxes.Title.String = 'Normalized spectra vs time';
+hf_spec.CurrentAxes.XLabel.String = 'Time [s]';
+
+t = datetime(times);
+t = t - t(1);
+
+
+%%
+peaks.wvl = nan(size(t));
+peaks.wid = nan(size(t));
+
+for i=1:length(t)
+    if ~isempty(fpi.peaks.min(i).locs)
+        if length(fpi.peaks.min(i).locs) > 1
+        else
+            peaks.wvl(i) = lambda(fpi.peaks.min(i).locs);
+            peaks.wid(i) = fpi.peaks.min(i).width;
+        end
+    end
+end
+
+figure(2),clf
+    plot(t,peaks.wvl*1e9)
+    grid on, box on
+    xlabel('Time'),ylabel('Wavelength [nm]')
+    title('Peak wavelength vs time')
