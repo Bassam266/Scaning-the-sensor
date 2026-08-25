@@ -57,6 +57,10 @@ FRAME_TIME = 0.1;   % seconds per frame
 yMin = min(spectra(:), [], 'omitnan');
 yMax = max(spectra(:), [], 'omitnan');
 
+% Colorbar limits for the dip-wavelength map. Leave as [] to auto-scale
+% to the map's own min/max, or set explicit [min max] values, e.g. [1032 1034].
+MAP_CLIM = [];
+
 %% ============================== 4. PLOT MAP + SPECTRUM & BUILD GIF ==============================
 
 fig = figure('Name', 'Spectra animation', 'Position', [100 100 1000 450]);
@@ -79,6 +83,9 @@ for ky = 1:scan.ny
         cb.FontSize = 14;
         cb.Label.String = 'Dip wavelength [nm]';
         cb.Label.FontSize = 14;
+        if ~isempty(MAP_CLIM)
+            set(gca, 'CLim', MAP_CLIM);
+        end
         xlabel('x [um]'); ylabel('y [um]'); title('Dip wavelength map [nm]');
         hold on;
         plot(scan.x_um(kx), scan.y_um(ky), 'wo', 'MarkerSize', 10, 'LineWidth', 2);
