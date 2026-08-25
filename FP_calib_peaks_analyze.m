@@ -29,9 +29,16 @@ fprintf('spectra size: %s, lambda size: %s\n', ...
     mat2str(size(spectra)), mat2str(size(lambda)));
 
 %% ============================== 2. FPI ANALYSIS ==============================
-% spectra is (nx, ny, nLambda), so wavelength is dimension 3.
+% spectra is (nx, ny, nLambda). The class's constructor only avoids a
+% lambdaDim bug when a *trailing* size-1 dimension disappears during
+% permute (a quirk of MATLAB's ndims, not something the class checks for
+% directly): with lambdadim=3 directly on the 3D data, nothing collapses
+% and the constructor throws "Invalid input argument lambdaDim!". Work
+% around it by adding back a dummy avg=1 dimension before nLambda and
+% using lambdadim=4 instead.
+spectra4D = reshape(spectra, [scan.nx, scan.ny, 1, numel(lambda)]);
 
-fpi = FPISpectraAnalysis('lambda', lambda, 'spectra', spectra, 'lambdadim', 3);
+fpi = FPISpectraAnalysis('lambda', lambda, 'spectra', spectra4D, 'lambdadim', 4);
 
 fpi.Normalize('spectra');
 fpi.Smooth(20, 'spectra');
