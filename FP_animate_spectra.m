@@ -74,7 +74,11 @@ for ky = 1:scan.ny
         % --- left panel: dip-wavelength map with current point marked ---
         subplot(1, 2, 1);
         imagesc(scan.x_um, scan.y_um, dipWl_map);
-        set(gca, 'YDir', 'normal'); axis image; colormap(gca, 'turbo'); colorbar;
+        set(gca, 'YDir', 'normal'); axis image; colormap(gca, 'turbo');
+        cb = colorbar;
+        cb.FontSize = 14;
+        cb.Label.String = 'Dip wavelength [nm]';
+        cb.Label.FontSize = 14;
         xlabel('x [um]'); ylabel('y [um]'); title('Dip wavelength map [nm]');
         hold on;
         plot(scan.x_um(kx), scan.y_um(ky), 'wo', 'MarkerSize', 10, 'LineWidth', 2);
@@ -91,8 +95,6 @@ for ky = 1:scan.ny
         grid on;
         legend('Spectrum', 'Dip', 'Location', 'best');
         title(sprintf('Point %d/%d  (kx=%d, ky=%d)', pt, scan.Npts, kx, ky));
-
-        sgtitle(sprintf('%s', FILE_TO_ANALYZE), 'Interpreter', 'none');
 
         drawnow;
 
