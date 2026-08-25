@@ -700,8 +700,8 @@ classdef FPISpectraAnalysis < handle
                 
                 stats.contrast.mean = mean(Ctmp, 'omitnan');
                 stats.contrast.std = std(Ctmp, 0, 1, 'omitnan');
-                stats.contrast.max = max(Ctmp, 'all', 'omitnan');
-                stats.contrast.min = min(Ctmp, 'all', 'omitnan');
+                stats.contrast.max = max(Ctmp, [], 'all', 'omitnan');
+                stats.contrast.min = min(Ctmp, [], 'all', 'omitnan');
             end
             
             
@@ -715,8 +715,8 @@ classdef FPISpectraAnalysis < handle
                 
                 stats.peaks.width.mean = mean(Wtmp, 'omitnan');
                 stats.peaks.width.std = std(Wtmp, 0, 1, 'omitnan');
-                stats.peaks.width.max = max(Wtmp, 'all', 'omitnan');
-                stats.peaks.width.min = min(Wtmp, 'all', 'omitnan');
+                stats.peaks.width.max = max(Wtmp, [], 'all', 'omitnan');
+                stats.peaks.width.min = min(Wtmp, [], 'all', 'omitnan');
             end
             
             obj.stats = stats;
