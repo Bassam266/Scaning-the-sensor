@@ -22,5 +22,5 @@ The system integrates two Thorlabs piezoelectric motors with an optical spectrum
 
 
 <p align="center">
-  <img src="amimation_1.gif" width="45%" />
+  <img src="animation_1.gif" width="45%" />
 </p>
