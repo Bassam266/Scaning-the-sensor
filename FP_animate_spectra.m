@@ -59,7 +59,7 @@ yMax = max(spectra(:), [], 'omitnan');
 
 % Colorbar limits for the dip-wavelength map. Leave as [] to auto-scale
 % to the map's own min/max, or set explicit [min max] values, e.g. [1032 1034].
-MAP_CLIM = [];
+MAP_CLIM = [1032 1033];
 
 %% ============================== 4. PLOT MAP + SPECTRUM & BUILD GIF ==============================
 
@@ -81,7 +81,7 @@ for ky = 1:scan.ny
         set(gca, 'YDir', 'normal'); axis image; colormap(gca, 'turbo');
         cb = colorbar;
         cb.FontSize = 14;
-        cb.Label.String = 'Dip wavelength [nm]';
+        %cb.Label.String = 'Dip wavelength [nm]';
         cb.Label.FontSize = 14;
         if ~isempty(MAP_CLIM)
             set(gca, 'CLim', MAP_CLIM);
