@@ -37,7 +37,7 @@ SMOOTH_WIN = 15;   % moving-average window, in samples, for Smooth()
 % Wavelength range to keep, in nm. Leave either bound as [] to use the
 % full range on that side, e.g. LAMBDA_MIN_NM = 1032; LAMBDA_MAX_NM = [];
 LAMBDA_MIN_NM = [];
-LAMBDA_MAX_NM = [];
+LAMBDA_MAX_NM = [1035];
 
 %% ============================== 3. CROP TO WAVELENGTH RANGE ==============================
 
