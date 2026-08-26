@@ -39,6 +39,10 @@ SMOOTH_WIN = 15;   % moving-average window, in samples, for Smooth()
 LAMBDA_MIN_NM = [];
 LAMBDA_MAX_NM = [];
 
+% Colorbar limits for the dip-position map. Leave as [] to auto-scale
+% to the map's own min/max, or set explicit [min max] values, e.g. [1032 1034].
+MAP_CLIM = [];
+
 %% ============================== 3. CROP TO WAVELENGTH RANGE ==============================
 
 lambda_nm = lambda(:) * 1e9;
@@ -87,18 +91,26 @@ fprintf('Dip wavelength: mean %.3f nm, std %.3f nm\n', ...
     mean(dipWl_map(:), 'omitnan'), std(dipWl_map(:), 0, 'omitnan'));
 
 %% ============================== 6. PLOTS ==============================
+% Both panels together in a single figure.
 
-% --- processed reflectivity spectra, all measurement points overlaid ---
-hf_spec = fpi.ShowSpectra(1, 'type', 'plot');
-hf_spec.CurrentAxes.Title.String = 'Reflectivity spectra (smoothed)';
-hf_spec.CurrentAxes.YLabel.String = 'Reflectivity';
+figure('Name', 'Spectra & dip map', 'Position', [100 100 1000 450]);
 
-% --- dip-position map ---
-figure('Name', 'Dip position map', 'Position', [100 100 550 450]);
+% --- left: processed reflectivity spectra, all measurement points overlaid ---
+subplot(1, 2, 1);
+plot(fpi.lambda * 1e9, fpi.spectra(:, :));
+xlabel('Wavelength [nm]'); ylabel('Reflectivity');
+title('Reflectivity spectra (smoothed)');
+grid on; box on;
+
+% --- right: dip-position map ---
+subplot(1, 2, 2);
 imagesc(scan.x_um, scan.y_um, dipWl_map);
 set(gca, 'YDir', 'normal'); axis image; colormap(gca, 'turbo');
 cb = colorbar;
 cb.Label.String = 'Dip wavelength [nm]';
+if ~isempty(MAP_CLIM)
+    set(gca, 'CLim', MAP_CLIM);
+end
 xlabel('x [um]'); ylabel('y [um]');
 title('Dip position map (after smoothing)');
 
